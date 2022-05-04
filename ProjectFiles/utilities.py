@@ -31,9 +31,15 @@ class Subject():
 
 ### Aufgabe 2: Datenverarbeitung ###
 
+def ShowMinimum(df):
+
+
+
+
 def calculate_CMA(df,n):
     pass
-    
+    reliance = pd.read_csv('data' + str = '1' + '.csv', index_col='Date',
+                       parse_dates=True)
 
 def calculate_SMA(df,n):
     pass
