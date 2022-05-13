@@ -116,8 +116,14 @@ def update_figure(value, algorithm_checkmarks):
     fig2 = px.line(ts, x="Time (s)", y = data_names[2])
     
     ### Aufgabe 2: Min / Max ###
-if('min' in algorithm_checkmarks):
-    fig0.add_scattergl(customdata=[[50,100]])
+    if(algorithm_checkmarks is not None):
+        print("a")
+        if('min' in algorithm_checkmarks):
+            d = {"one": [ts["SpO2 (%)"].idxmin()], "two": [ts["SpO2 (%)"].min()5]}
+            d =pd.DataFrame(d)
+            print(d)
+            fig0.add_pointcloud(d)
+    
     return fig0, fig1, fig2 
 
 
