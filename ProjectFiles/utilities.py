@@ -15,7 +15,7 @@ class Subject():
 
         __f = open(file_name)
         self.subject_data = pd.read_csv(__f)
-        self.subject_data = self.subject_data.interpolate(method='slinear', axis=0)
+        self.subject_data = self.subject_data.interpolate(method='slinear', axis=0) #interpolationstyp slinear 170522
         __splited_id = re.findall(r'\d+',file_name)      
         self.subject_id = ''.join(__splited_id)
         self.names = self.subject_data.columns.values.tolist()
@@ -27,12 +27,28 @@ class Subject():
 
 
 
-        
-
+   
 ### Aufgabe 2: Datenverarbeitung ###
-
 
 def calculate_CMA(df,n):
     pass
+    
+
 def calculate_SMA(df,n):
-    pass
+    pass     
+
+### Aufgabe 2: Datenverarbeitung ###
+
+#class Average():
+ #   def calculate_CMA(df,n):
+
+    #Eingabedaten auswählen
+    #Subject
+
+
+
+
+
+#    pass
+#def calculate_SMA(df,n):
+  #  pass

@@ -2,6 +2,9 @@ from cmath import nan
 from tempfile import SpooledTemporaryFile
 import dash
 from dash import Dash, html, dcc, Output, Input, dash_table
+from statistics import mode #Bibliothek erweitert 170522
+import plotly.graph_objects as go #Bibliothek erweitert 170522
+from dash import Dash, dcc, html, Input, Output #Bibliothek erweitert 170522
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
@@ -116,14 +119,30 @@ def update_figure(value, algorithm_checkmarks):
     fig2 = px.line(ts, x="Time (s)", y = data_names[2])
     
     ### Aufgabe 2: Min / Max ###
-    if(algorithm_checkmarks is not None):
-        print("a")
-        if('min' in algorithm_checkmarks):
-            d = {"one": [ts["SpO2 (%)"].idxmin()], "two": [ts["SpO2 (%)"].min()5]}
-            d =pd.DataFrame(d)
-            print(d)
-            fig0.add_pointcloud(d)
+
     
+    #if(algorithm_checkmarks is not None):
+      #  print("a")
+       # if('min' in algorithm_checkmarks):
+          #  d = {"one": [ts["SpO2 (%)"].idxmin()], "two": [ts["SpO2 (%)"].min()5]}
+          #  d =pd.DataFrame(d)
+          #  print(d)
+          #  fig0.add_pointcloud(d)
+
+    #Aufabe 2 Minimum und Maximum je Auswahl Button direkt im graphen anzeigen 
+
+    #list of functions 
+    graph = ts.agg(['min', 'max', 'idxmin', 'idxmax']) 
+    print(graph)
+    
+    #add trace to graph for 'min' function
+    if 'min' in algorithm_checkmarks:
+        fig0.add_trace(go.Scatter(x = [graph.loc['idmin', data_names[0]]], y = [graph.loc['min', data_names[0]]], mode = 'markers', name = 'min', marker_symbol = hline, marker_size = 10, marker_color = 'red'))
+
+
+
+
+    #fig.add_trace(go.Scatter(x=data["Time"], y=data["OD"], mode='markers', marker=dict(color=data["C-source"], size=data["C:A 1 ratio"])))    
     return fig0, fig1, fig2 
 
 
