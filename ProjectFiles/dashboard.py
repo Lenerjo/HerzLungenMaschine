@@ -138,14 +138,17 @@ def update_figure(value, algorithm_checkmarks):
     #add trace to graph for 'min' function
     if 'min' in algorithm_checkmarks:
         fig0.add_trace(go.Scatter(x = [grp.loc['idxmin', data_names[0]]], y = [grp.loc['min', data_names[0]]], mode = 'markers', name = 'min', marker_symbol = 6, marker_size = 10, marker_color = 'red'))
+        fig1.add_trace(go.Scatter(x = [grp.loc['idxmin', data_names[1]]], y = [grp.loc['min', data_names[1]]], mode = 'markers', name = 'min', marker_symbol = 6, marker_size = 10, marker_color = 'red'))
+        fig2.add_trace(go.Scatter(x = [grp.loc['idxmin', data_names[2]]], y = [grp.loc['min', data_names[2]]], mode = 'markers', name = 'min', marker_symbol = 6, marker_size = 10, marker_color = 'red'))
 
     #add trace to graph for 'max' functon 
     if 'max' in algorithm_checkmarks:
         fig0.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[0]]], y = [grp.loc['max', data_names[0]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 10, marker_color = 'green'))
+        fig1.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[1]]], y = [grp.loc['max', data_names[1]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 10, marker_color = 'green'))
+        fig2.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[2]]], y = [grp.loc['max', data_names[2]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 10, marker_color = 'green'))
 
 
-
-    #fig.add_trace(go.Scatter(x=data["Time"], y=data["OD"], mode='markers', marker=dict(color=data["C-source"], size=data["C:A 1 ratio"])))    
+    #Hilfestellung -> #fig.add_trace(go.Scatter(x=data["Time"], y=data["OD"], mode='markers', marker=dict(color=data["C-source"], size=data["C:A 1 ratio"])))    
     return fig0, fig1, fig2 
 
 
