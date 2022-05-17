@@ -132,13 +132,16 @@ def update_figure(value, algorithm_checkmarks):
     #Aufabe 2 Minimum und Maximum je Auswahl Button direkt im graphen anzeigen 
 
     #list of functions 
-    graph = ts.agg(['min', 'max', 'idxmin', 'idxmax']) 
-    print(graph)
+    grp = ts.agg(['min', 'max', 'idxmin', 'idxmax']) 
+    print(grp)
     
     #add trace to graph for 'min' function
     if 'min' in algorithm_checkmarks:
-        fig0.add_trace(go.Scatter(x = [graph.loc['idmin', data_names[0]]], y = [graph.loc['min', data_names[0]]], mode = 'markers', name = 'min', marker_symbol = hline, marker_size = 10, marker_color = 'red'))
+        fig0.add_trace(go.Scatter(x = [grp.loc['idxmin', data_names[0]]], y = [grp.loc['min', data_names[0]]], mode = 'markers', name = 'min', marker_symbol = 6, marker_size = 10, marker_color = 'red'))
 
+    #add trace to graph for 'max' functon 
+    if 'max' in algorithm_checkmarks:
+        fig0.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[0]]], y = [grp.loc['max', data_names[0]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 10, marker_color = 'green'))
 
 
 
