@@ -1,5 +1,6 @@
 # Import external packages
 
+from fileinput import filename
 from multiprocessing.connection import wait
 import pandas as pd
 from datetime import datetime
@@ -16,8 +17,9 @@ class Subject():
         __f = open(file_name)
         self.subject_data = pd.read_csv(__f)
         self.subject_data = self.subject_data.interpolate(method='slinear', axis=0) #interpolationstyp slinear 170522
-        __splited_id = re.findall(r'\d+',file_name)      
-        self.subject_id = ''.join(__splited_id)
+        #__splited_id = re.findall(r'\d+',file_name)
+        #Auswahl subject ID greift 221,222,223 ab
+        self.subject_id = file_name.split('.csv')[0][-1] #-> filename aus DataX.csv Datei + nur die letzte Stelle
         self.names = self.subject_data.columns.values.tolist()
         self.time = self.subject_data["Time (s)"]        
         self.spO2 = self.subject_data["SpO2 (%)"]
