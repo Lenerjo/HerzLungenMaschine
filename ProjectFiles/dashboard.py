@@ -1,10 +1,9 @@
 from cmath import nan
+from pickle import NONE
 from tempfile import SpooledTemporaryFile
 import dash
 from dash import Dash, html, dcc, Output, Input, dash_table
-from statistics import mode #Bibliothek erweitert 170522
-import plotly.graph_objects as go #Bibliothek erweitert 170522
-from dash import Dash, dcc, html, Input, Output #Bibliothek erweitert 170522
+#import matplotlib.pyplot as plt
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
@@ -53,12 +52,29 @@ fig1 = px.line(df, x="Time (s)", y = "Blood Flow (ml/s)")
 fig2 = px.line(df, x="Time (s)", y = "Temp (C)")
 fig3 = px.line(df, x="Time (s)", y = "Blood Flow (ml/s)")
 
-app.layout = html.Div(children=[
-    html.H1(children='Cardiopulmonary Bypass Dashboard'),
+#Aufgabe 5 Applayout
 
-    html.Div(children='''
-        Hier könnten Informationen zum Patienten stehen....
-    '''),
+#Überschrift in der Mitte und Fett Groß
+app.layout = html.Div(children=[
+    html.H1(children='Cardiopulmonary Bypass Dashboard', style = {'text-align':'center'}), #Zentrierung der Überschrift
+    
+    #Auswahlfenster für gespeicherte Patienten Befunde der letzten Sitzungen
+    html.Div([
+        html.Div(
+            [
+                html.H2('ADDITIONAL SUBJECT DATA:', style = {'marign':'2em'}), #Beschriftung Dropdown Menü1
+            ]
+        ),
+            dcc.Dropdown(id = 'input-type:',
+            options = [{'label':'FINDINGS 2020:', 'value':'OPT1'},{'label':'FINDINGS 2021:', 'value': 'OPT2'}], #Hier sollen noch Befunde dargestellt werden
+            multi = False,
+            placeholder = 'CHOOSE SUBJECT',
+            style={'width': '50%', 'padding': '3px', 'font-size': '20px', 'text-align-last': 'center'}
+        )
+    ], style = {'display': 'flex'}),
+
+
+        #Patientendaten Name: Max Mustermann Alter:24 Gewicht: 90kg Größe:188cm''', sytle = {'tex'}),
 
     dcc.Checklist(
     id= 'checklist-algo',
@@ -118,18 +134,7 @@ def update_figure(value, algorithm_checkmarks):
     # Blood Temperature
     fig2 = px.line(ts, x="Time (s)", y = data_names[2])
     
-    ### Aufgabe 2: Min / Max ###
-
-    
-    #if(algorithm_checkmarks is not None):
-      #  print("a")
-       # if('min' in algorithm_checkmarks):
-          #  d = {"one": [ts["SpO2 (%)"].idxmin()], "two": [ts["SpO2 (%)"].min()5]}
-          #  d =pd.DataFrame(d)
-          #  print(d)
-          #  fig0.add_pointcloud(d)
-
-    #Aufabe 2 Minimum und Maximum je Auswahl Button direkt im graphen anzeigen 
+    ###Aufabe 2 Minimum und Maximum je Auswahl Button direkt im graphen anzeigen 
 
     #list of functions 
     grp = ts.agg(['min', 'max', 'idxmin', 'idxmax']) 
@@ -166,6 +171,23 @@ def bloodflow_figure(value, bloodflow_checkmarks):
     bf = list_of_subjects[int(value)-1].subject_data
     fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s)")
 
+    if bloodflow_checkmarks is None:
+        if  'CMA' in bloodflow_checkmarks:
+        bf = list_of_subjects[int(value)].subject_data
+        bf["Blood Flow (ml/s) - CMA"] = ut.calculate_CMA(bf["Blood Flow (ml/s)"], 2)
+        fig3 = px.line(bf, x = "Time (s)", y = "Blood FLow (ml/s) - CMA")
+
+
+        if 'SMA' bloodflow_checkmarks == ["SMA"]:
+        bf = list_of_subjects[int(value)-1].subject_data
+        bf["Blood Flow (ml/s) - SMA"] = ut.calculate_SMA(bf["Blood Flow (ml/s)"],10)
+        fig3 = px.line(bf, x = "Time (s)", y = "Blood FLow (ml/s) - SMA")
+
+
+    avg = bf.mean()
+
+
+    ###Aufgabe 3 noch zu erledigen
 
     return fig3
 
