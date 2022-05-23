@@ -166,28 +166,33 @@ def update_figure(value, algorithm_checkmarks):
 )
 def bloodflow_figure(value, bloodflow_checkmarks):
     
-    ## Calculate Moving Average: Aufgabe 2
+    ## Calculate Moving Average: Aufgabe 2 #Caluclation in utilities
     print(bloodflow_checkmarks)
-    bf = list_of_subjects[int(value)-1].subject_data
-    fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s)")
+    bf = list_of_subjects[int(value)-1].subject_data # bf deklaration
+    fig3 = px.line(bf, x="Time (s)", y="Blood Flow (ml/s)") #fig 3 Darstellung
 
-    if bloodflow_checkmarks is None:
-        if  'CMA' in bloodflow_checkmarks:
-        bf = list_of_subjects[int(value)].subject_data
-        bf["Blood Flow (ml/s) - CMA"] = ut.calculate_CMA(bf["Blood Flow (ml/s)"], 2)
-        fig3 = px.line(bf, x = "Time (s)", y = "Blood FLow (ml/s) - CMA")
+    if bloodflow_checkmarks is not None:
 
+        if 'SMA' in bloodflow_checkmarks: #Abfrage SMA Button
+            bf['Simple Moving Average']=ut.calculate_SMA(bf['Blood Flow (ml/s)'],10) #n=10 Perioden für SMA
+            fig3 = px.line(bf, x="Time (s)", y="Simple Moving Average")
 
-        if 'SMA' bloodflow_checkmarks == ["SMA"]:
-        bf = list_of_subjects[int(value)-1].subject_data
-        bf["Blood Flow (ml/s) - SMA"] = ut.calculate_SMA(bf["Blood Flow (ml/s)"],10)
-        fig3 = px.line(bf, x = "Time (s)", y = "Blood FLow (ml/s) - SMA")
+        if 'CMA' in bloodflow_checkmarks:
+            bf['Cumulative Moving Average']=ut.calculate_CMA(bf['Blood Flow (ml/s)'],2)
+            fig3 = px.line(bf, x="Time (s)", y="Cumulative Moving Average")
 
+    ## Durchschnitt: Aufgabe 3
+        if 'Show Limits' in bloodflow_checkmarks:
+            avg=bf.mean()
+            x=[0,480]
+            y=avg.loc['Blood Flow (ml/s)']
+            fig3.add_trace(go.Scatter(x=x,y=[y,y],mode='lines',name='Durchschnitt',marker_color='lime'))
 
-    avg = bf.mean()
+            y_up=avg.loc['Blood Flow (ml/s)']*1.15 #Grenze von +15%
+            y_down=avg.loc['Blood Flow (ml/s)']*0.85 #Grenze von -15%
 
-
-    ###Aufgabe 3 noch zu erledigen
+            fig3.add_trace(go.Scatter(x=x,y=[y_up,y_up],mode='lines',name='+15%',marker_color='orangered'))
+            fig3.add_trace(go.Scatter(x=x,y=[y_down,y_down],mode='lines',name='-15%',marker_color='orangered'))
 
     return fig3
 

@@ -38,7 +38,7 @@ def calculate_CMA(df,n):                #Berechnung CMA
     
 
 def calculate_SMA(df,n):                #Berechnung SMA
-    return df.rolling(n).mean     
+    return df.rolling(n).mean()    
 
 ### Aufgabe 4
 
