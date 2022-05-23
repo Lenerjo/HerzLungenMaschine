@@ -56,8 +56,8 @@ fig3 = px.line(df, x="Time (s)", y = "Blood Flow (ml/s)")
 
 #Überschrift in der Mitte und Fett Groß
 app.layout = html.Div(children=[
-    html.H1(children='Cardiopulmonary Bypass Dashboard', style = {'text-align':'center'}), #Zentrierung der Überschrift
-    
+    html.H1(children='Cardiopulmonary Bypass Dashboard', style = {'color' : 'blue', 'text-align':'center'}), #Zentrierung der Überschrift
+
     #Auswahlfenster für gespeicherte Patienten Befunde der letzten Sitzungen
     html.Div([
         html.Div(
@@ -68,7 +68,7 @@ app.layout = html.Div(children=[
             dcc.Dropdown(id = 'input-type:',
             options = [{'label':'FINDINGS 2020:', 'value':'OPT1'},{'label':'FINDINGS 2021:', 'value': 'OPT2'}], #Hier sollen noch Befunde dargestellt werden
             multi = False,
-            placeholder = 'CHOOSE SUBJECT',
+            placeholder = 'CHOOSE FINDING',
             style={'width': '50%', 'padding': '3px', 'font-size': '20px', 'text-align-last': 'center'}
         )
     ], style = {'display': 'flex'}),
@@ -140,18 +140,20 @@ def update_figure(value, algorithm_checkmarks):
     grp = ts.agg(['min', 'max', 'idxmin', 'idxmax']) 
     print(grp)
     
-    #add trace to graph for 'min' function
-    if 'min' in algorithm_checkmarks:
-        fig0.add_trace(go.Scatter(x = [grp.loc['idxmin', data_names[0]]], y = [grp.loc['min', data_names[0]]], mode = 'markers', name = 'min', marker_symbol = 6, marker_size = 10, marker_color = 'red'))
-        fig1.add_trace(go.Scatter(x = [grp.loc['idxmin', data_names[1]]], y = [grp.loc['min', data_names[1]]], mode = 'markers', name = 'min', marker_symbol = 6, marker_size = 10, marker_color = 'red'))
-        fig2.add_trace(go.Scatter(x = [grp.loc['idxmin', data_names[2]]], y = [grp.loc['min', data_names[2]]], mode = 'markers', name = 'min', marker_symbol = 6, marker_size = 10, marker_color = 'red'))
+    if algorithm_checkmarks is not None:
 
-    #add trace to graph for 'max' functon 
-    if 'max' in algorithm_checkmarks:
-        fig0.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[0]]], y = [grp.loc['max', data_names[0]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 10, marker_color = 'green'))
-        fig1.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[1]]], y = [grp.loc['max', data_names[1]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 10, marker_color = 'green'))
-        fig2.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[2]]], y = [grp.loc['max', data_names[2]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 10, marker_color = 'green'))
+        #add trace to graph for 'min' function
+        if 'min' in algorithm_checkmarks:
+            fig0.add_trace(go.Scatter(x = [grp.loc['idxmin', data_names[0]]], y = [grp.loc['min', data_names[0]]], mode = 'markers', name = 'min', marker_symbol = 6, marker_size = 10, marker_color = 'red'))
+            fig1.add_trace(go.Scatter(x = [grp.loc['idxmin', data_names[1]]], y = [grp.loc['min', data_names[1]]], mode = 'markers', name = 'min', marker_symbol = 6, marker_size = 10, marker_color = 'red'))
+            fig2.add_trace(go.Scatter(x = [grp.loc['idxmin', data_names[2]]], y = [grp.loc['min', data_names[2]]], mode = 'markers', name = 'min', marker_symbol = 6, marker_size = 10, marker_color = 'red'))
 
+        #add trace to graph for 'max' functon 
+        if 'max' in algorithm_checkmarks:
+            fig0.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[0]]], y = [grp.loc['max', data_names[0]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 10, marker_color = 'green'))
+            fig1.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[1]]], y = [grp.loc['max', data_names[1]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 10, marker_color = 'green'))
+            fig2.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[2]]], y = [grp.loc['max', data_names[2]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 10, marker_color = 'green'))
+    
 
     #Hilfestellung -> #fig.add_trace(go.Scatter(x=data["Time"], y=data["OD"], mode='markers', marker=dict(color=data["C-source"], size=data["C:A 1 ratio"])))    
     return fig0, fig1, fig2 
