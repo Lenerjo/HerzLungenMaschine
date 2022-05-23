@@ -2,9 +2,9 @@ from cmath import nan
 from pickle import NONE
 from tempfile import SpooledTemporaryFile
 import dash
+import plotly.express as px
 from dash import Dash, html, dcc, Output, Input, dash_table
 #import matplotlib.pyplot as plt
-import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 import utilities as ut
@@ -154,7 +154,6 @@ def update_figure(value, algorithm_checkmarks):
             fig1.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[1]]], y = [grp.loc['max', data_names[1]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 10, marker_color = 'green'))
             fig2.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[2]]], y = [grp.loc['max', data_names[2]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 10, marker_color = 'green'))
     
-
     #Hilfestellung -> #fig.add_trace(go.Scatter(x=data["Time"], y=data["OD"], mode='markers', marker=dict(color=data["C-source"], size=data["C:A 1 ratio"])))    
     return fig0, fig1, fig2 
 
@@ -196,7 +195,11 @@ def bloodflow_figure(value, bloodflow_checkmarks):
             fig3.add_trace(go.Scatter(x=x,y=[y_up,y_up],mode='lines',name='+15%',marker_color='orangered'))
             fig3.add_trace(go.Scatter(x=x,y=[y_down,y_down],mode='lines',name='-15%',marker_color='orangered'))
 
-    return fig3
+            fig0.update_traces(update_lines_cols = '#194a8d')
+            fig1.update_traces(update_lines_cols = '#194a8d')
+            fig2.update_traces(update_lines_cols = '#194a8d')
+            fig3.update_traces(update_lines_cols = '#194a8d')
 
+        return fig3
 if __name__ == '__main__':
     app.run_server(debug=True)
