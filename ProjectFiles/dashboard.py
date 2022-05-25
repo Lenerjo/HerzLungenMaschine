@@ -175,6 +175,8 @@ def update_figure(value, algorithm_checkmarks):
     # Blood Temperature
     fig2 = px.line(ts, x="Time (s)", y = data_names[2])
     
+    #-------------------------------------------------Aufgabe 2  Minimum und Maximum ---------------------------------------------------------------------
+
     ###Aufabe 2 Minimum und Maximum je Auswahl Button direkt im graphen anzeigen 
 
     #list of functions 
@@ -232,7 +234,7 @@ def bloodflow_figure(value, bloodflow_checkmarks):
             bf['Cumulative Moving Average']=ut.calculate_CMA(bf['Blood Flow (ml/s)'],2)
             fig3 = px.line(bf, x="Time (s)", y="Cumulative Moving Average")
 
-    ## Durchschnitt: Aufgabe 3
+    #-------------------------------------------------Aufgabe 3  Durchschnitt  ---------------------------------------------------------------------
         if 'Show Limits' in bloodflow_checkmarks:
             avg=bf.mean()
             x=[0,480]

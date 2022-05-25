@@ -40,7 +40,7 @@ def calculate_CMA(df,n):                #Berechnung CMA
 def calculate_SMA(df,n):                #Berechnung SMA
     return df.rolling(n).mean()    
 
-### Aufgabe 4
+    #-------------------------------------------------Aufgabe 4 ---------------------------------------------------------------------
 
 #4.1
 #Der Simple Moving Average (SMA) ist ein gleitender Durchschnitt über die letzten "n"-Perioden.
@@ -54,6 +54,7 @@ def calculate_SMA(df,n):                #Berechnung SMA
 #4.2
 #desto höher "n" deste mehr Perioden werden miteinbezogen und somit wird das Signal mehr geglättet
 
+## zusatz noch nicht fertig
 #Zusatz alte Befunde in Dash dartsellen
 #Datei einlesen
 
