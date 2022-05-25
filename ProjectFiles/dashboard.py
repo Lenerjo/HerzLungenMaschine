@@ -13,13 +13,15 @@ import re
 import logging
 
 
-#Logfile erstellen
-Log_Format = "%(levelname)s:%(asctime)s:%(message)s"
+#-------------------------------------------------Aufgabe Zusatz Logdatei ---------------------------------------------------------------------#Logfile erstellen
+Log_Format = "%(levelname)s:%(asctime)s:%(message)s" #Format
 
-logging.basicConfig(filename = "logfile.logg",
+#Benennung der Datei, Dateityp
+logging.basicConfig(filename = "logfile_HLM.logg",
                     filemode = "w",
                     format = Log_Format, 
                     level = logging.INFO)
+                    
 app = Dash(__name__)
 
 
@@ -61,12 +63,11 @@ fig1 = px.line(df, x="Time (s)", y = "Blood Flow (ml/s)")
 fig2 = px.line(df, x="Time (s)", y = "Temp (C)")
 fig3 = px.line(df, x="Time (s)", y = "Blood Flow (ml/s)")
 
-#Aufgabe 5 Applayout
+#-------------------------------------------------Aufgabe 5 Applayout ---------------------------------------------------------------------
 
-#Überschrift in der Mitte und Fett Groß
 app.layout = html.Div(children=[
-    
-    html.H1(children='Cardiopulmonary Bypass Dashboard', style = {'color':'#263238', 'text-align':'center'}), #Zentrierung der Überschrift
+    #Hauptüberschrift zentriert und mit Hintergrund
+    html.H1(children='Cardiopulmonary Bypass Dashboard', style = {'color':'#263238', 'text-align':'center', 'backgroundColor': '#E0E0E0'}), #Zentrierung der Überschrift
 
     html.Div([
         
@@ -78,44 +79,65 @@ app.layout = html.Div(children=[
         dcc.Dropdown(options = subj_numbers, placeholder='Select a subject', value='1', id='subject-dropdown'),
         html.Div(id='dd-output-container')
         ],
-        style={"width": "15%", "display": "inline"}
+        style={"width": "10%", "display": "inline-10"}
     ),
 
         html.Div(
             [
                 html.H2('Select your filter:', style = {'color':'#263238', 'marign':'1em'}), #Beschriftung Auswahl Filter
             ]
-        ),
-        dcc.Checklist(style={'backgroundColor': '#E8F5E9'},
-        id= 'checklist-algo',
-        options=algorithm_names,
-        inline=False
-    ),
+        ),        
+        #Checkliste Min/Max
+        dcc.Checklist(
+            id= 'checklist-algo',
+            options=algorithm_names,
 
-       dcc.Checklist(style={'backgroundColor': '#E8F5E9'},
-        id= 'checklist-bloodflow',
-        options=blood_flow_functions,
-        inline=False
-    ),    
+            style={'display': 'inline'}, 
+            labelStyle={"font-family": "Arial, Helvetica, sans-serif",
+                "color": "#424242",
+                'display': 'inline'},
+            inputStyle={"margin-right": "7.5px", "margin-left": "15px"}
+        ),
+
+        # Checkliste CMA/SMA/Limits
+        dcc.Checklist(
+            id= 'checklist-bloodflow',
+            options=blood_flow_functions,
+
+            # CSS Attribute für Checklisten wegen label und input nicht in style.css ausgelagert
+            style={'display': 'inline'},
+            labelStyle={"font-family": "Arial, Helvetica, sans-serif",
+                "color": "#424242",
+                'display': 'inline'},
+            inputStyle={"margin-right": "7.5px", "margin-left": "15px"}
+        ),
     
+    #Darstellung Graphen
+    #Graph SP02
      dcc.Graph(
         id='dash-graph0',
         figure=fig0
      ),
-
+    
+    #Graph Blood flow
     dcc.Graph(
         id='dash-graph1',
         figure=fig1
     ),
+
+    #Graph Temp
     dcc.Graph(
         id='dash-graph2',
         figure=fig2
     ),
+
+    #Graph Blood Flow
     dcc.Graph(
         id='dash-graph3',
         figure=fig3
     ),
-        #Auswahlfenster für gespeicherte Patienten Befunde der letzten Sitzungen
+    
+    #Auswahlfenster für gespeicherte Patienten Befunde der letzten Sitzungen #To Do: Input Daten bereitstellen und darstellen
     html.Div([
         html.Div(
             [
@@ -130,6 +152,8 @@ app.layout = html.Div(children=[
         )
     ], style = {'display': 'flex'}),
 ])
+
+
 ### Callback Functions ###
 ## Graph Update Callback
 @app.callback(
@@ -199,10 +223,12 @@ def bloodflow_figure(value, bloodflow_checkmarks):
     if bloodflow_checkmarks is not None:
 
         if 'SMA' in bloodflow_checkmarks: #Abfrage SMA Button
+            logging.info('SMA initialized') #Logging
             bf['Simple Moving Average']=ut.calculate_SMA(bf['Blood Flow (ml/s)'],10) #n=10 Perioden für SMA
             fig3 = px.line(bf, x="Time (s)", y="Simple Moving Average")
 
         if 'CMA' in bloodflow_checkmarks:
+            logging.info('CMA initialized') #Logging
             bf['Cumulative Moving Average']=ut.calculate_CMA(bf['Blood Flow (ml/s)'],2)
             fig3 = px.line(bf, x="Time (s)", y="Cumulative Moving Average")
 
