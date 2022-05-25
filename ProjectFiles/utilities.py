@@ -16,7 +16,7 @@ class Subject():
 
         __f = open(file_name)   #CSV Datei auslesen
         self.subject_data = pd.read_csv(__f)
-        self.subject_data = self.subject_data.interpolate(method='slinear', axis=0) #interpolationstyp slinear 170522. Dieser ist aufgrund der kleinen Lückenausbildung + linearem Verhalten sinnvoll
+        self.subject_data = self.subject_data.interpolate(method='quadratic', axis=0) #interpolationstyp quadratic 170522. Dieser ist aufgrund der kleinen Lückenausbildung sinnvoll (slinear wäre sinnvoll)
 
         #__splited_id = re.finall(r'\d+',file_name)
         #Auswahl subject ID greift 221,222,223 ab
