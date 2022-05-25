@@ -4,14 +4,22 @@ from tempfile import SpooledTemporaryFile
 import dash
 import plotly.express as px
 from dash import Dash, html, dcc, Output, Input, dash_table
-#import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import pandas as pd
 import utilities as ut
 import numpy as np
 import os
 import re
+import logging
 
+
+#Logfile erstellen
+Log_Format = "%(levelname)s:%(asctime)s:%(message)s"
+
+logging.basicConfig(filename = "logfile.logg",
+                    filemode = "w",
+                    format = Log_Format, 
+                    level = logging.INFO)
 app = Dash(__name__)
 
 
@@ -37,6 +45,7 @@ df = list_of_subjects[0].subject_data
 for i in range(number_of_subjects):
     subj_numbers.append(list_of_subjects[i].subject_id)
 
+    logging.info('Subject {}{}'.format(i,' initialised'))
 data_names = ["SpO2 (%)", "Blood Flow (ml/s)","Temp (C)"]
 algorithm_names = ['min','max']
 blood_flow_functions = ['CMA','SMA','Show Limits']
@@ -56,43 +65,43 @@ fig3 = px.line(df, x="Time (s)", y = "Blood Flow (ml/s)")
 
 #Überschrift in der Mitte und Fett Groß
 app.layout = html.Div(children=[
-    html.H1(children='Cardiopulmonary Bypass Dashboard', style = {'color' : 'blue', 'text-align':'center'}), #Zentrierung der Überschrift
+    
+    html.H1(children='Cardiopulmonary Bypass Dashboard', style = {'color':'#263238', 'text-align':'center'}), #Zentrierung der Überschrift
 
-    #Auswahlfenster für gespeicherte Patienten Befunde der letzten Sitzungen
     html.Div([
+        
         html.Div(
             [
-                html.H2('ADDITIONAL SUBJECT DATA:', style = {'marign':'2em'}), #Beschriftung Dropdown Menü1
+                html.H2('Select your subject:', style = {'color':'#263238', 'marign':'1em'}), #Beschriftung Auswahl Subject
             ]
         ),
-            dcc.Dropdown(id = 'input-type:',
-            options = [{'label':'FINDINGS 2020:', 'value':'OPT1'},{'label':'FINDINGS 2021:', 'value': 'OPT2'}], #Hier sollen noch Befunde dargestellt werden
-            multi = False,
-            placeholder = 'CHOOSE FINDING',
-            style={'width': '50%', 'padding': '3px', 'font-size': '20px', 'text-align-last': 'center'}
-        )
-    ], style = {'display': 'flex'}),
-
-
-        #Patientendaten Name: Max Mustermann Alter:24 Gewicht: 90kg Größe:188cm''', sytle = {'tex'}),
-
-    dcc.Checklist(
-    id= 'checklist-algo',
-    options=algorithm_names,
-    inline=False
-    ),
-
-    html.Div([
         dcc.Dropdown(options = subj_numbers, placeholder='Select a subject', value='1', id='subject-dropdown'),
-    html.Div(id='dd-output-container')
-    ],
-        style={"width": "15%"}
+        html.Div(id='dd-output-container')
+        ],
+        style={"width": "15%", "display": "inline"}
     ),
 
-    dcc.Graph(
+        html.Div(
+            [
+                html.H2('Select your filter:', style = {'color':'#263238', 'marign':'1em'}), #Beschriftung Auswahl Filter
+            ]
+        ),
+        dcc.Checklist(style={'backgroundColor': '#E8F5E9'},
+        id= 'checklist-algo',
+        options=algorithm_names,
+        inline=False
+    ),
+
+       dcc.Checklist(style={'backgroundColor': '#E8F5E9'},
+        id= 'checklist-bloodflow',
+        options=blood_flow_functions,
+        inline=False
+    ),    
+    
+     dcc.Graph(
         id='dash-graph0',
         figure=fig0
-    ),
+     ),
 
     dcc.Graph(
         id='dash-graph1',
@@ -102,16 +111,24 @@ app.layout = html.Div(children=[
         id='dash-graph2',
         figure=fig2
     ),
-
-    dcc.Checklist(
-        id= 'checklist-bloodflow',
-        options=blood_flow_functions,
-        inline=False
-    ),
     dcc.Graph(
         id='dash-graph3',
         figure=fig3
-    )
+    ),
+        #Auswahlfenster für gespeicherte Patienten Befunde der letzten Sitzungen
+    html.Div([
+        html.Div(
+            [
+                html.H2('ADDITIONAL SUBJECT DATA:', style = {'color':'#263238', 'marign':'2em'}), #Beschriftung Dropdown Menü1
+            ]
+        ),
+            dcc.Dropdown(id = 'input-type:',
+            options = [{'label':'FINDINGS 2020:', 'value':'OPT1'},{'label':'FINDINGS 2021:', 'value': 'OPT2'}], #Hier sollen noch Befunde dargestellt werden
+            multi = False,
+            placeholder = 'CHOOSE FINDING',
+            style={'width': '50%', 'padding': '3px', 'font-size': '20px', 'text-align-last': 'center'}
+        )
+    ], style = {'display': 'flex'}),
 ])
 ### Callback Functions ###
 ## Graph Update Callback
@@ -144,16 +161,23 @@ def update_figure(value, algorithm_checkmarks):
 
         #add trace to graph for 'min' function
         if 'min' in algorithm_checkmarks:
-            fig0.add_trace(go.Scatter(x = [grp.loc['idxmin', data_names[0]]], y = [grp.loc['min', data_names[0]]], mode = 'markers', name = 'min', marker_symbol = 6, marker_size = 12, marker_color = 'red')) #Symbole deren Größe usw.
-            fig1.add_trace(go.Scatter(x = [grp.loc['idxmin', data_names[1]]], y = [grp.loc['min', data_names[1]]], mode = 'markers', name = 'min', marker_symbol = 6, marker_size = 12, marker_color = 'red'))
-            fig2.add_trace(go.Scatter(x = [grp.loc['idxmin', data_names[2]]], y = [grp.loc['min', data_names[2]]], mode = 'markers', name = 'min', marker_symbol = 6, marker_size = 12, marker_color = 'red'))
+            #starte Log bei Auswahl
+            logging.info('min initialized')
+            fig0.add_trace(go.Scatter(x = [grp.loc['idxmin', data_names[0]]], y = [grp.loc['min', data_names[0]]], mode = 'markers', name = 'min', marker_symbol = 6, marker_size = 12, marker_color = '#F44336')) #Symbole deren Größe usw.
+            fig1.add_trace(go.Scatter(x = [grp.loc['idxmin', data_names[1]]], y = [grp.loc['min', data_names[1]]], mode = 'markers', name = 'min', marker_symbol = 6, marker_size = 12, marker_color = '#F44336'))
+            fig2.add_trace(go.Scatter(x = [grp.loc['idxmin', data_names[2]]], y = [grp.loc['min', data_names[2]]], mode = 'markers', name = 'min', marker_symbol = 6, marker_size = 12, marker_color = '#F44336'))
 
         #add trace to graph for 'max' functon 
         if 'max' in algorithm_checkmarks:
-            fig0.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[0]]], y = [grp.loc['max', data_names[0]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 12, marker_color = 'green'))
-            fig1.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[1]]], y = [grp.loc['max', data_names[1]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 12, marker_color = 'green'))
-            fig2.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[2]]], y = [grp.loc['max', data_names[2]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 12, marker_color = 'green'))
+            #starte Log bei Auswahl
+            logging.info('max initialized')
+            fig0.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[0]]], y = [grp.loc['max', data_names[0]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 12, marker_color = '#4A8D19'))
+            fig1.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[1]]], y = [grp.loc['max', data_names[1]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 12, marker_color = '#4A8D19'))
+            fig2.add_trace(go.Scatter(x = [grp.loc['idxmax', data_names[2]]], y = [grp.loc['max', data_names[2]]], mode = 'markers', name = 'max', marker_symbol = 5, marker_size = 12, marker_color = '#4A8D19'))
     
+    #fig0.update_traces(update_lines_color = '#194a8d')
+    # fig1.update_traces(update_lines_cols = '#4a8d19')
+    # fig2.update_traces(update_lines_cols = '#194a8d')
     #Hilfestellung -> #fig.add_trace(go.Scatter(x=data["Time"], y=data["OD"], mode='markers', marker=dict(color=data["C-source"], size=data["C:A 1 ratio"])))    
     return fig0, fig1, fig2 
 
@@ -187,18 +211,16 @@ def bloodflow_figure(value, bloodflow_checkmarks):
             avg=bf.mean()
             x=[0,480]
             y=avg.loc['Blood Flow (ml/s)']
-            fig3.add_trace(go.Scatter(x=x,y=[y,y],mode='lines',name='Durchschnitt',marker_color='lime'))
+            fig3.add_trace(go.Scatter(x=x,y=[y,y],mode='lines',name='Average',marker_color='#4A8D19'))
 
             y_up=avg.loc['Blood Flow (ml/s)']*1.15 #Grenze von +15%
             y_down=avg.loc['Blood Flow (ml/s)']*0.85 #Grenze von -15%
 
-            fig3.add_trace(go.Scatter(x=x,y=[y_up,y_up],mode='lines',name='+15%',marker_color='orangered'))
-            fig3.add_trace(go.Scatter(x=x,y=[y_down,y_down],mode='lines',name='-15%',marker_color='orangered'))
+            fig3.add_trace(go.Scatter(x=x,y=[y_up,y_up],mode='lines',name='+15%',marker_color='#F44336'))
+            fig3.add_trace(go.Scatter(x=x,y=[y_down,y_down],mode='lines',name='-15%',marker_color='#F44336'))
 
-    fig0.update_traces(update_lines_cols = '#194a8d')
-    fig1.update_traces(update_lines_cols = '#4a8d19')
-    fig2.update_traces(update_lines_cols = '#194a8d')
-    fig3.update_traces(update_lines_cols = '#194a8d')
+    #fig3.update_traces(update_lines_cols = '#4A8D19') #Änderung der Farbe des Trends
     return fig3
+    
 if __name__ == '__main__':
     app.run_server(debug=True)

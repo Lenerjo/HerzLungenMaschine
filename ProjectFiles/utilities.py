@@ -53,3 +53,18 @@ def calculate_SMA(df,n):                #Berechnung SMA
 
 #4.2
 #desto höher "n" deste mehr Perioden werden miteinbezogen und somit wird das Signal mehr geglättet
+
+#Zusatz alte Befunde in Dash dartsellen
+#Datei einlesen
+
+class Subject2():
+    def __init__(self, file_name):
+
+        __f = open(file_name)   #CSV Datei auslesen
+        self.subject_data = pd.read_csv(__f)
+
+        self.subject_id = file_name.split('findings.csv')[0] #-> filename aus DataX.csv Datei + nur die letzte Stelle
+        self.names = self.subject_data.columns.values.tolist()
+        self.findings = self.subject_data["Findings"]        
+    
+        print('Finding ' + self.subject_id + ' initialized')
